@@ -15,7 +15,7 @@ bus_project/
      └── bus_pipeline_dag.py #For future scope
 
 ```
-## ⚙️ Requirements
+## Requirements
 
 - #### **Python 3.8+**
 
@@ -23,7 +23,7 @@ bus_project/
 
 - #### **pip** for Python packages
 
-## 📦 Installation
+##  Installation
 
 #### 1. Clone the repo / create folder
 ```bash
