@@ -4,15 +4,16 @@ import random
 from kafka import KafkaProducer
 
 producer = KafkaProducer(
-    bootstrap_servers="172.16.12.165:9092",
+    bootstrap_servers="localhost:9092",
     value_serializer=lambda v: json.dumps(v).encode("utf-8")
 )
-buses = ["BUS101", "BUS102", "BUS103"]
+buses = ["BUS101", "BUS102", "BUS103","BUS104"]
 
 locations = {
     "BUS101": [18.5204, 73.8567],
     "BUS102": [18.5300, 73.8500],
-    "BUS103": [18.5400, 73.8700]
+    "BUS103": [18.5400, 73.8700],
+    "BUS104": [18.5500, 73.8600]
 }
 
 while True:

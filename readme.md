@@ -3,6 +3,10 @@
 #### This project lets parents track their kids’ school buses in real-time.
 #### It uses Kafka for streaming bus GPS data, Flask for the backend, and Leaflet.js for live maps.
 
+## Project Architecture
+
+<img src="architecture.png" alt="Alt text" width="500"/>
+
 ## Project Structure
 ```bash
 bus_project/

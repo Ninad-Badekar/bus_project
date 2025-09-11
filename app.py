@@ -10,7 +10,7 @@ bus_data = {}
 def consume_data():
     consumer = KafkaConsumer(
         "bus_location",
-        bootstrap_servers="172.16.12.165:9092",
+        bootstrap_servers="localhost:9092",
         value_deserializer=lambda v: json.loads(v.decode("utf-8"))
     )
     for msg in consumer:

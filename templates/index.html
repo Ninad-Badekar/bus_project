@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
     #map { height: 500px; margin-top: 20px; }
+    .bus-list { margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -17,51 +18,58 @@
   <button onclick="window.location.reload()">Refresh Buses</button>
   <br><br>
 
-  <label for="busSelect">Select Bus:</label>
-  <select id="busSelect">
+  <label>Select Buses:</label>
+  <div class="bus-list">
     {% for bus in buses %}
-      <option value="{{ bus }}">{{ bus }}</option>
+      <input type="checkbox" id="bus_{{ bus }}" name="bus" value="{{ bus }}">
+      <label for="bus_{{ bus }}">Bus {{ bus }}</label><br>
     {% endfor %}
-  </select>
+  </div>
 
-  <button onclick="trackBus()">Track Bus</button>
+  <button onclick="trackBuses()">Track Selected Buses</button>
 
   <div id="map"></div>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    let map = L.map('map').setView([20.5937, 78.9629], 5); // Center India
+    let map = L.map('map').setView([20.5937, 78.9629], 5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    let marker = null;
-    let currentBus = null;
+    let markers = {}; // dictionary: busNo -> marker
     let interval = null;
 
-    function trackBus() {
-      currentBus = document.getElementById("busSelect").value;
+    function trackBuses() {
+      let checkboxes = document.querySelectorAll('input[name="bus"]:checked');
+      let buses = Array.from(checkboxes).map(cb => cb.value);
+
       if (interval) clearInterval(interval);
 
       interval = setInterval(() => {
-        fetch("/bus/" + currentBus)
-          .then(res => res.json())
-          .then(data => {
-            if (data.latitude && data.longitude) {
-              let lat = data.latitude;
-              let lon = data.longitude;
-              if (!marker) {
-                marker = L.marker([lat, lon]).addTo(map)
-                          .bindPopup("Bus " + currentBus).openPopup();
-                map.setView([lat, lon], 15);
-              } else {
-                marker.setLatLng([lat, lon]);
-                marker.getPopup().setContent("Bus " + currentBus + "<br>Lat: " + lat + "<br>Lon: " + lon);
+        buses.forEach(busNo => {
+          fetch("/bus/" + busNo)
+            .then(res => res.json())
+            .then(data => {
+              if (data.latitude && data.longitude) {
+                let lat = data.latitude;
+                let lon = data.longitude;
+
+                if (!markers[busNo]) {
+                  markers[busNo] = L.marker([lat, lon]).addTo(map)
+                                     .bindPopup("Bus " + busNo).openPopup();
+                  map.setView([lat, lon], 15);
+                } else {
+                  markers[busNo].setLatLng([lat, lon]);
+                  markers[busNo].getPopup().setContent(
+                    "Bus " + busNo + "<br>Lat: " + lat + "<br>Lon: " + lon
+                  );
+                }
               }
-            }
-          });
-      }, 2000); // refresh every 2s
+            });
+        });
+      }, 20000); // refresh every 2s
     }
   </script>
 </body>
